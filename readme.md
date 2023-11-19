@@ -42,4 +42,4 @@ When you select text that text is converted to a regular expression using really
 
 ## Install
 
-Clone repo and install as an unpacked extension.
+Clone repo and install as an unpacked extension from the `chrome` directory.

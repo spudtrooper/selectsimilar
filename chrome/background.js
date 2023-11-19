@@ -54,6 +54,9 @@ const handleStateUpdate = (tabId, data) => {
     console.log("Notification created with ID:", notificationId);
   });
   console.log("chrome.notifications.create =>", res);
+
+  const numResults = Object.keys(histogramData).length;
+  chrome.action.setBadgeText({ text: `${numResults}` });
 };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -79,6 +82,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     let { tabId } = data;
     if (!tabId) tabId = sender.tab.id;
     clearState(tabId);
+    chrome.action.setBadgeText({ text: "" });
     sendResponse("cleared");
     return;
 

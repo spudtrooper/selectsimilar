@@ -4,7 +4,6 @@
   "version": "0.0.3",
   "permissions": [
     "activeTab",
-    "browserAction",
     "contextMenus",
     "notifications",
     "storage"

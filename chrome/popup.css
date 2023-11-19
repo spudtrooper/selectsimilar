@@ -1,0 +1,39 @@
+body {
+  font-family: sans-serif;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  min-width: 500px;
+  padding: 10px;
+}
+
+.card {
+  border: solid black 1px;
+  padding: 7px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.textInput {
+  width: 100%;
+}
+
+#histogramTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#histogramTable,
+#histogramTable th,
+#histogramTable td {
+  border: 1px solid black;
+}
+
+#histogramTable th,
+#histogramTable td {
+  padding: 5px;
+  text-align: left;
+}

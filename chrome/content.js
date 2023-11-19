@@ -102,6 +102,20 @@ const searchAndHighlightSelectedText = (selectedText) => {
   return searchAndHighlightSelectedTextAndRegexp(selectedText, regexp);
 };
 
+const showHistogramTable = (histogramData) => {
+  const showing = updateHistogramTable(histogramData);
+  updateState({ histogramShowing: showing });
+
+};
+
+const closeHistogramTable = () => {
+  closeHistogramTableWrapper();
+  updateState({
+    histogramShowing: false,
+  });
+};
+
+
 const searchAndHighlightSelectedTextAndRegexp = (selectedText, regexp) => {
   note("selectedText", selectedText);
   note("regexp", regexp);
@@ -131,6 +145,17 @@ const clear = () => {
   chrome.runtime.sendMessage({ action: "clearStateForTab" });
 };
 
+const state = {
+  contentState: {
+    histogramShowing: false,
+  },
+};
+
+const updateState = (newState) => {
+  console.log("updateState", "state", state, "newState", newState);
+  state.contentState = { ...state.contentState, ...newState };
+};
+
 const main = () => {
   const histWrap = addHistogramWrapper(document.body, `
     position: absolute;
@@ -156,7 +181,7 @@ const main = () => {
   histWrap.appendChild(closeButton);
   closeButton.addEventListener("click", (e) => {
     e.preventDefault();
-    histWrap.style.display = "none";
+    closeHistogramTable();
   });
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -183,6 +208,11 @@ const main = () => {
 
     if (action === "clear") {
       clear();
+      return;
+    }
+
+    if (action === "closeHistogramTable") {
+      closeHistogramTable();
       return;
     }
 

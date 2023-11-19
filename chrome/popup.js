@@ -105,6 +105,7 @@ const main = () => {
     setTimeout(reset, HACK_WAIT_MILLIS);
   });
 
+  sendMessageToContentScript({ action: "closeHistogramTable" });
   reset();
 };;
 

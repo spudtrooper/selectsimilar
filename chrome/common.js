@@ -21,6 +21,15 @@ class ColorFinder {
 
 const note = (...args) => console.log(...args);
 
+const getHistogramTableWrapper = () =>
+  document.getElementById("histogramTableWrapper");
+
+const closeHistogramTableWrapper = () =>
+  getHistogramTableWrapper().style.display = "none";
+
+const showHistogramTableWrapper = () =>
+  getHistogramTableWrapper().style.display = "block";
+
 const addHistogramWrapper = (el, style) => {
   let res = document.getElementById("histogramTableWrapper");
   if (!res) {
@@ -42,6 +51,7 @@ const addHistogramWrapper = (el, style) => {
   return res;
 };
 
+// Returns whether we show the table.
 const updateHistogramTable = (histogramData) => {
   histogramData = histogramData || {};
 
@@ -66,7 +76,8 @@ const updateHistogramTable = (histogramData) => {
       countCell.textContent = count;
     });
     tableWrapper.style.display = "block";
-  } else {
-    tableWrapper.style.display = "none";
+    return true;
   }
+  tableWrapper.style.display = "none";
+  return false;
 };

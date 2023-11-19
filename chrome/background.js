@@ -26,8 +26,8 @@ const state = {
   tabState: {},
 };
 
-const setState = (tabId, newState) => {
-  console.log("setState", "state", state, "newState", newState);
+const updateState = (tabId, newState) => {
+  console.log("updateState", "state", state, "newState", newState);
   const tabState = getState(tabId);
   state[tabId] = { ...tabState, ...newState };
 };
@@ -43,7 +43,7 @@ const clearState = (tabId) => state[tabId] = emptyState();
 
 const handleStateUpdate = (tabId, data) => {
   const { regexp, histogramData, selectedText } = data;
-  setState(tabId, { regexp, histogramData, selectedText });
+  updateState(tabId, { regexp, histogramData, selectedText });
   // TODO: This doesn't work
   const res = chrome.notifications.create(`textAnalysisComplete-${tabId}`, {
     type: "basic",

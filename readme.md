@@ -1,5 +1,7 @@
 # Select Similar Chrome Extension
 
+A chrome extension to search for "similar text" to the text you selected.
+
 ## Motivation
 
 You see an ipv6 address and want to know others on the page, e.g.

@@ -88,7 +88,7 @@ const main = () => {
   });
 
   addEventListener("saveRegexButton", "click", () => {
-    console.log("TODO");
+    console.log("TODO: Go to options and add it there.");
   });
 
 

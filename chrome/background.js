@@ -12,51 +12,52 @@ chrome.runtime.onInstalled.addListener(() => {
   updateContextMenu();
 });
 
-function updateContextMenu() {
-  chrome.storage.local.get('regexps', function (data) {
-    if (chrome.runtime.lastError) {
-      console.error(`Error retrieving regexps: ${chrome.runtime.lastError}`);
-      return;
-    }
+function getRegexps() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get('regexps', function (data) {
+      if (chrome.runtime.lastError) {
+        reject(`Error retrieving regexps: ${chrome.runtime.lastError}`);
+        return;
+      }
 
-    const regexps = data.regexps || {};
-
-    // Remove existing submenu items
-    chrome.contextMenus.removeAll();
-
-    // Add a parent menu item
-    chrome.contextMenus.create({
-      id: "searchRegexp",
-      title: "Search RegExp",
-      contexts: ["all"]
+      const regexps = data.regexps || {};
+      resolve(regexps);
     });
+  });
+}
 
-    // Add submenu items for each regexp
-    Object.keys(regexps).forEach(name => {
-      chrome.contextMenus.create({
-        id: name,
-        title: name,
-        parentId: "searchRegexp",
-        contexts: ["all"]
-      });
+async function updateContextMenu() {
+  const regexps = await getRegexps();
+
+  // Remove existing submenu items
+  chrome.contextMenus.removeAll();
+
+  // Add a parent menu item
+  chrome.contextMenus.create({
+    id: "searchRegexp",
+    title: "Search RegExp",
+    contexts: ["all"]
+  });
+
+  // Add submenu items for each regexp
+  Object.keys(regexps).forEach(name => {
+    chrome.contextMenus.create({
+      id: name,
+      title: name,
+      parentId: "searchRegexp",
+      contexts: ["all"]
     });
   });
 }
 
 // Add onClicked event listener
-chrome.contextMenus.onClicked.addListener((info, tab) => {
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== "searchRegexp") {
-    chrome.storage.local.get('regexps', function (data) {
-      if (chrome.runtime.lastError) {
-        console.error(`Error retrieving regexps: ${chrome.runtime.lastError}`);
-        return;
-      }
+    const regexps = await getRegexps();
 
-      const regexps = data.regexps || {};
-      const regexp = regexps[info.menuItemId],
-        regexpName = info.menuItemId;
-      performSearch(regexpName, regexp, tab);
-    });
+    const regexp = regexps[info.menuItemId],
+      regexpName = info.menuItemId;
+    performSearch(regexpName, regexp, tab);
   }
 });
 
@@ -172,6 +173,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handleStateUpdate(tabId, response);
       sendResponse(response);
     });
+    return;
+  }
+
+  if (action === "updateContextMenu") {
+    updateContextMenu();
     return;
   }
 

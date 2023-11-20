@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(() => {
   });
   chrome.contextMenus.create({
     id: "searchRegexp",
-    title: "Search RegExp",
+    title: "Search for Pattern",
     contexts: ["all"]
   });
   updateContextMenu();
@@ -27,27 +27,32 @@ function getRegexps() {
 }
 
 async function updateContextMenu() {
-  const regexps = await getRegexps();
-
   // Remove existing submenu items
   chrome.contextMenus.removeAll();
 
-  // Add a parent menu item
   chrome.contextMenus.create({
-    id: "searchRegexp",
-    title: "Search RegExp",
-    contexts: ["all"]
+    id: "findSimilarText",
+    title: "Find Similar Text",
+    contexts: ["selection"]
   });
 
-  // Add submenu items for each regexp
-  Object.keys(regexps).forEach(name => {
+  const regexps = await getRegexps();
+
+  if (Object.keys(regexps).length) {
     chrome.contextMenus.create({
-      id: name,
-      title: name,
-      parentId: "searchRegexp",
+      id: "searchRegexp",
+      title: "Search for Pattern",
       contexts: ["all"]
     });
-  });
+    Object.keys(regexps).forEach(name => {
+      chrome.contextMenus.create({
+        id: name,
+        title: name,
+        parentId: "searchRegexp",
+        contexts: ["all"]
+      });
+    });
+  }
 }
 
 // Add onClicked event listener

@@ -57,12 +57,27 @@ const updateContextMenu = async () => {
 
 // Add onClicked event listener
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId !== "searchRegexp") {
+  if (!["searchRegexp", "findSimilarText"].includes(info.menuItemId)) {
     const regexps = await getRegexps();
 
     const regexp = regexps[info.menuItemId],
       regexpName = info.menuItemId;
     performSearch(regexpName, regexp, tab);
+    return;
+  }
+  if (info.menuItemId === "findSimilarText") {
+    const action = "findSimilar",
+      data = { text: info.selectionText };
+    chrome.tabs.sendMessage(tab.id, { action, data }, (response) => {
+      if (response) {
+        handleStateUpdate(tab.id, response);
+      } else {
+        console.log("No response from content script for ",
+          "action", action,
+          "data", data);
+      }
+    });
+    return;
   }
 });
 
@@ -80,22 +95,6 @@ const performSearch = (regexpName, regexp, tab) => {
     }
   });
 };
-
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "findSimilarText") {
-    const action = "findSimilar",
-      data = { text: info.selectionText };
-    chrome.tabs.sendMessage(tab.id, { action, data }, (response) => {
-      if (response) {
-        handleStateUpdate(tab.id, response);
-      } else {
-        console.log("No response from content script for ",
-          "action", action,
-          "data", data);
-      }
-    });
-  }
-});
 
 const state = {
   tabState: {},

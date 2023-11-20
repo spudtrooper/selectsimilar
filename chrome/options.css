@@ -1,0 +1,20 @@
+.regexpTable {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 10px;
+}
+
+.regexp {
+  font-family: monospace;
+}
+
+.messages {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 10px;
+  background-color: #fff3c0;
+  border: 2px solid #e6db55;
+  color: #000;
+}

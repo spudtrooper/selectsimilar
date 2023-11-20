@@ -87,6 +87,11 @@ const main = () => {
     apply();
   });
 
+  addEventListener("saveRegexButton", "click", () => {
+    console.log("TODO");
+  });
+
+
   addEventListener("generalizeButton", "click", () => {
     const currentRegExp = document.getElementById("regexInput").value;
     const alignedRegExp = alignRegExp(currentRegExp);

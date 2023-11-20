@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Options</title>
+  <link rel="stylesheet" type="text/css" href="options.css">
+</head>
+
+<body>
+  <h1>Regular Expression Options</h1>
+  <div id="messages" class="messages" style="display:none"></div>
+  <form id="regexpForm">
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="regexp" placeholder="Regular Expression" size="70">
+    <button type="submit">Add</button>
+  </form>
+  <div id="status" class="status"></div>
+  <table id="regexpTable" class="regexpTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Regular Expression</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be added here dynamically -->
+    </tbody>
+  </table>
+  <script src="options.js"></script>
+</body>
+
+</html>

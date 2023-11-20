@@ -33,19 +33,45 @@ const showHistogramTableWrapper = () =>
 const addHistogramWrapper = (el, style) => {
   let res = document.getElementById("histogramTableWrapper");
   if (!res) {
-    el.innerHTML += `
-<div class="card" id="histogramTableWrapper" style="display:none; ${style || ""}">
-  <table id="histogramTable">
-    <thead>
-      <tr>
-        <th>Text</th>
-        <th>Occurrences</th>
-      </tr>
-    </thead>
-    <tbody> </tbody>
-  </table>
-</div>
-`;
+    // Create the outer div
+    const div = document.createElement('div');
+    div.classList.add('card');
+    div.id = 'histogramTableWrapper';
+    div.style.display = 'none';
+    if (style) {
+      div.style.cssText += style;
+    }
+
+    // Create the table
+    const table = document.createElement('table');
+    table.id = 'histogramTable';
+
+    // Create the table head and its contents
+    const thead = document.createElement('thead');
+    const tr = document.createElement('tr');
+    const th1 = document.createElement('th');
+    th1.textContent = 'Text';
+    const th2 = document.createElement('th');
+    th2.textContent = 'Occurrences';
+
+    // Append the th elements to the tr, and tr to thead
+    tr.appendChild(th1);
+    tr.appendChild(th2);
+    thead.appendChild(tr);
+
+    // Create the table body
+    const tbody = document.createElement('tbody');
+
+    // Append thead and tbody to the table
+    table.appendChild(thead);
+    table.appendChild(tbody);
+
+    // Append the table to the div
+    div.appendChild(table);
+
+    // Append the div to the provided element
+    el.appendChild(div);
+
     res = document.getElementById("histogramTableWrapper");
   }
   return res;

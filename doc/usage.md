@@ -1,5 +1,7 @@
 # Usage
 
+## Selecting text
+
 1. Select the text for which you'll search
 
     ![select text](./sel.png)
@@ -23,6 +25,10 @@
     2. And hope to capture what you wanted
 
         ![desired](./desired.png)
+
+## Using saved regexps
+
+You can add and edit regexps in options. After added, when you bring up the context menu without a selection  you can choose from the saved regexps to use for matching.
 
 ## Install
 

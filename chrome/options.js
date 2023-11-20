@@ -82,7 +82,7 @@ async function loadRegexps() {
     // Create actions cell
     const actionsTd = document.createElement("td");
     const editButton = createButton("Edit", () => editRegexp(name));
-    const deleteButton = createButton("Delete", async () => (await deleteRegexp(name)));
+    const deleteButton = createButton("Delete", () => deleteRegexp(name));
     actionsTd.appendChild(editButton);
     actionsTd.appendChild(deleteButton);
     tr.appendChild(actionsTd);

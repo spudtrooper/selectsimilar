@@ -199,8 +199,11 @@ const main = () => {
     }
 
     if (action === "useRegexp") {
-      const { regexp, selectedText, tabId } = data;
-      const dataToSend = useRegexp(regexp, selectedText, tabId);
+      const { regexp, selectedText, tabId, regexpName } = data;
+      let dataToSend = useRegexp(regexp, selectedText, tabId);
+      if (regexpName) {
+        dataToSend = { ...dataToSend, regexpName };
+      }
       sendResponse(dataToSend);
       chrome.runtime.sendMessage({ action: "sendRegExp", data: dataToSend });
       return;

@@ -4,7 +4,76 @@ chrome.runtime.onInstalled.addListener(() => {
     title: "Find Similar Text",
     contexts: ["selection"]
   });
+  chrome.contextMenus.create({
+    id: "searchRegexp",
+    title: "Search RegExp",
+    contexts: ["all"]
+  });
+  updateContextMenu();
 });
+
+function updateContextMenu() {
+  chrome.storage.local.get('regexps', function (data) {
+    if (chrome.runtime.lastError) {
+      console.error(`Error retrieving regexps: ${chrome.runtime.lastError}`);
+      return;
+    }
+
+    const regexps = data.regexps || {};
+
+    // Remove existing submenu items
+    chrome.contextMenus.removeAll();
+
+    // Add a parent menu item
+    chrome.contextMenus.create({
+      id: "searchRegexp",
+      title: "Search RegExp",
+      contexts: ["all"]
+    });
+
+    // Add submenu items for each regexp
+    Object.keys(regexps).forEach(name => {
+      chrome.contextMenus.create({
+        id: name,
+        title: name,
+        parentId: "searchRegexp",
+        contexts: ["all"]
+      });
+    });
+  });
+}
+
+// Add onClicked event listener
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId !== "searchRegexp") {
+    chrome.storage.local.get('regexps', function (data) {
+      if (chrome.runtime.lastError) {
+        console.error(`Error retrieving regexps: ${chrome.runtime.lastError}`);
+        return;
+      }
+
+      const regexps = data.regexps || {};
+      const regexp = regexps[info.menuItemId],
+        regexpName = info.menuItemId;
+      performSearch(regexpName, regexp, tab);
+    });
+  }
+});
+
+function performSearch(regexpName, regexp, tab) {
+  const tabId = tab.id,
+    action = "useRegexp",
+    data = { regexp, selectedText: "", regexpName, tabId };
+  chrome.tabs.sendMessage(tab.id, { action, data }, (response) => {
+    if (response) {
+      handleStateUpdate(tab.id, response);
+    } else {
+      console.log("No response from content script for ",
+        "action", action,
+        "data", data);
+    }
+  });
+}
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "findSimilarText") {

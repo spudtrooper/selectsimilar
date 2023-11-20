@@ -20,7 +20,11 @@ function getRegexps() {
         return;
       }
 
-      const regexps = data.regexps || {};
+      const regexps = data.regexps || {
+        "email": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
+        "ipv6": "([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}",
+        "ipv4": "(?:[0-9]{1,3}\\.){3}[0-9]{1,3}",
+      };
       resolve(regexps);
     });
   });

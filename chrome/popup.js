@@ -35,8 +35,8 @@ const populateHistogramTable = (histogramData) => {
 };
 
 const handleStateUpdate = ({ regexp, histogramData, selectedText }) => {
-  document.getElementById("regexInput").value = regexp;
-  document.getElementById("selectedTextInput").value = selectedText;
+  document.getElementById("regexInput").value = regexp || "";
+  document.getElementById("selectedTextInput").value = selectedText || "";
   populateHistogramTable(histogramData);
 };
 
@@ -97,7 +97,7 @@ const main = () => {
   addEventListener("generalizeButton", "click", () => {
     const currentRegExp = document.getElementById("regexInput").value;
     const alignedRegExp = alignRegExp(currentRegExp);
-    document.getElementById("regexInput").value = alignedRegExp;
+    document.getElementById("regexInput").value = alignedRegExp || "";
     apply();
   });
 

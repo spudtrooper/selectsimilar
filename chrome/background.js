@@ -12,7 +12,7 @@ chrome.runtime.onInstalled.addListener(() => {
   updateContextMenu();
 });
 
-function getRegexps() {
+const getRegexps = () => {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get('regexps', function (data) {
       if (chrome.runtime.lastError) {
@@ -20,17 +20,13 @@ function getRegexps() {
         return;
       }
 
-      const regexps = data.regexps || {
-        "email": "[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+",
-        "ipv6": "([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}",
-        "ipv4": "(?:[0-9]{1,3}\\.){3}[0-9]{1,3}",
-      };
+      const regexps = data.regexps || {};
       resolve(regexps);
     });
   });
-}
+};
 
-async function updateContextMenu() {
+const updateContextMenu = async () => {
   // Remove existing submenu items
   chrome.contextMenus.removeAll();
 
@@ -57,7 +53,7 @@ async function updateContextMenu() {
       });
     });
   }
-}
+};
 
 // Add onClicked event listener
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -70,7 +66,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
-function performSearch(regexpName, regexp, tab) {
+const performSearch = (regexpName, regexp, tab) => {
   const tabId = tab.id,
     action = "useRegexp",
     data = { regexp, selectedText: "", regexpName, tabId };
@@ -83,7 +79,7 @@ function performSearch(regexpName, regexp, tab) {
         "data", data);
     }
   });
-}
+};
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "findSimilarText") {
@@ -129,7 +125,7 @@ const handleStateUpdate = (tabId, data) => {
     iconUrl: "images/icon.png",
     title: "Text Analysis Complete",
     message: "Click the extension icon to refine your search and view the histogram."
-  }, function (notificationId) {
+  }, (notificationId) => {
     console.log("Notification created with ID:", notificationId);
   });
   console.log("chrome.notifications.create =>", res);

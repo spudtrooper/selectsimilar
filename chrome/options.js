@@ -1,6 +1,3 @@
-document.addEventListener("DOMContentLoaded", loadRegexps);
-document.getElementById("regexpForm").addEventListener("submit", addRegexp);
-
 class Messages {
   constructor () {
     this.messages = [];
@@ -34,7 +31,7 @@ class Messages {
 
 const msgs = new Messages();
 
-function showMessage(msg) {
+const showMessage = (msg) => {
   console.log("showMessage", msg);
   const id = msgs.add(msg);
   msgs.show();
@@ -42,11 +39,11 @@ function showMessage(msg) {
     msgs.remove(id);
     msgs.show();
   }, 5000);
-}
+};
 
-function getRegexps() {
+const getRegexps = () => {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get('regexps', function (data) {
+    chrome.storage.local.get('regexps', (data) => {
       if (chrome.runtime.lastError) {
         reject(`Error retrieving regexps: ${chrome.runtime.lastError}`);
         return;
@@ -56,9 +53,9 @@ function getRegexps() {
       resolve(regexps);
     });
   });
-}
+};
 
-async function loadRegexps() {
+const loadRegexps = async () => {
   // Use Chrome"s storage API to get the saved regexps
   const regexps = await getRegexps();
 
@@ -91,18 +88,27 @@ async function loadRegexps() {
     tbody.appendChild(tr);
   });
 
+  const hasRegexps = !!Object.keys(regexps).length;
   const statusEl = document.getElementById("status");
-  statusEl.textContent = Object.keys(regexps).length ? "" : "No regular expressions saved.";
-}
+  const regexpTableWrapper = document.getElementById("regexpTableWrapper");
+  if (hasRegexps) {
+    regexpTableWrapper.style.display = "block";
+    statusEl.textContent = "";
 
-function createButton(text, onClick) {
+  } else {
+    regexpTableWrapper.style.display = "none";
+    statusEl.textContent = "No regular expressions saved.";
+  }
+};
+
+const createButton = (text, onClick) => {
   const button = document.createElement("button");
   button.textContent = text;
   button.addEventListener("click", onClick);
   return button;
-}
+};
 
-async function addRegexp(event) {
+const addRegexp = async (event) => {
   event.preventDefault();
 
   // Get the values from the input fields
@@ -111,7 +117,14 @@ async function addRegexp(event) {
 
   // Validate input
   if (!name || !regexp) {
-    alert("Both name and regular expression are required.");
+    showMessage("Both name and regular expression are required.");
+    return;
+  }
+
+  // Check if the name already exists
+  const regexps = await getRegexps();
+  if (regexps[name]) {
+    showMessage(`A regular expression for ${name} already exists.`);
     return;
   }
 
@@ -124,9 +137,12 @@ async function addRegexp(event) {
   // Clear the form fields
   document.getElementById("name").value = "";
   document.getElementById("regexp").value = "";
-}
+};
 
-function addToTable(name, regexp) {
+const addToTable = (name, regexp) => {
+  const regexpTableWrapper = document.getElementById("regexpTableWrapper");
+  regexpTableWrapper.style.display = "block";
+
   const tbody = document.getElementById("regexpTable").getElementsByTagName("tbody")[0];
   const tr = document.createElement("tr");
 
@@ -149,14 +165,14 @@ function addToTable(name, regexp) {
   tr.appendChild(actionsTd);
 
   tbody.appendChild(tr);
-}
+};
 
-async function saveRegexp(name, regexp) {
+const saveRegexp = async (name, regexp) => {
   const regexps = await getRegexps();
   regexps[name] = regexp;
 
   // Save back to Chrome storage
-  chrome.storage.local.set({ regexps }, function () {
+  chrome.storage.local.set({ regexps }, () => {
     if (chrome.runtime.lastError) {
       showMessager(`Error saving regexps: ${chrome.runtime.lastError}`);
     } else {
@@ -164,23 +180,16 @@ async function saveRegexp(name, regexp) {
     }
     chrome.runtime.sendMessage({ action: "updateContextMenu" });
   });
-}
+};
 
-function createButton(text, onClick) {
-  const button = document.createElement("button");
-  button.textContent = text;
-  button.addEventListener("click", onClick);
-  return button;
-}
-
-async function editRegexp(name) {
+const editRegexp = async (name) => {
   const regexps = await getRegexps();
   const oldValue = regexps[name];
 
   const newValue = prompt("Enter the new regular expression for " + name, oldValue);
   if (newValue === null || newValue.trim() === "" || newValue === oldValue) {
     showMessage("No change made.");
-    return; // User cancelled the edit
+    return;
   }
 
   // Find the row with this name and update it
@@ -194,9 +203,9 @@ async function editRegexp(name) {
 
   // Save the updated regexp to Chrome storage
   await saveRegexp(name, newValue);
-}
+};
 
-async function deleteRegexp(name) {
+const deleteRegexp = async (name) => {
   if (!confirm("Are you sure you want to delete the regular expression for " + name + "?")) {
     showMessage(`Cancelled deleting ${name}`);
     return;
@@ -218,4 +227,11 @@ async function deleteRegexp(name) {
   chrome.storage.local.set({ regexps });
   showMessage(`Removed ${name}`);
   chrome.runtime.sendMessage({ action: "updateContextMenu" });
-}
+};
+
+const main = () => {
+  document.addEventListener("DOMContentLoaded", loadRegexps);
+  document.getElementById("regexpForm").addEventListener("submit", addRegexp);
+};
+
+main();
